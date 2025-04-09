@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>MBTiles 瓦片地图示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 引入 Leaflet 样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- 设置页面样式 -->
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 地图容器 -->
+<div id="map"></div>
+
+<!-- 引入 Leaflet 脚本 -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // 初始化地图对象
+  const map = L.map('map').setView([31.2, 121.5], 12); // 上海徐汇为例
+
+  // 添加瓦片图层（指向你的后端服务）
+  L.tileLayer('http://localhost:8080/tiles/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    minZoom: 0,
+    tileSize: 256,
+    attribution: '© 自定义地图',
+    errorTileUrl: '', // 避免空图
+  }).addTo(map);
+
+  // ================================
+  // ✅ 添加点位 Marker（带 Popup）
+  // ================================
+  const marker = L.marker([31.196, 121.44]).addTo(map);
+  marker.bindPopup("<b>这是一个点位</b><br>说明文字或信息");
+
+  // 可以添加多个点
+  const points = [
+    [31.195, 121.437],
+    [31.198, 121.442],
+    [31.200, 121.445]
+  ];
+  points.forEach((pt, i) => {
+    L.marker(pt).addTo(map).bindPopup(`点位 ${i + 1}`);
+  });
+
+  // ================================
+  // ✅ 添加路线（折线 Polyline）
+  // ================================
+  const routePoints = [
+    [31.195, 121.437],
+    [31.197, 121.440],
+    [31.199, 121.443],
+    [31.201, 121.446]
+  ];
+
+  const polyline = L.polyline(routePoints, {
+    color: 'blue',
+    weight: 4,
+    opacity: 0.7,
+    smoothFactor: 1
+  }).addTo(map);
+
+  // 自动缩放到路线区域
+  map.fitBounds(polyline.getBounds());
+</script>
+
+</body>
+</html>
